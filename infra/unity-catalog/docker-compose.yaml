@@ -20,9 +20,9 @@ services:
       - type: bind
         source: ./etc/conf/server.properties
         target: /home/unitycatalog/etc/conf/server.properties
-      - type: volume
-        source: unitycatalog_data
-        target: /home/unitycatalog/etc/data
+#      - type: volume
+#        source: unitycatalog_data
+#        target: /home/unitycatalog/etc/data
   ui:
     image: docker.io/unitycatalog/unitycatalog-ui:main
     ports:
@@ -30,6 +30,6 @@ services:
     depends_on:
       - server
 
-volumes:
-  # Persist docker volume across container restarts
-  unitycatalog_data:
+#volumes:
+#  # Persist docker volume across container restarts
+#  unitycatalog_data:
