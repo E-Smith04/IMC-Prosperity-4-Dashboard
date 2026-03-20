@@ -1,5 +1,5 @@
 [project]
-name = "data-platform-py"
+name = "data-platform-sdk"
 version = "0.1.0"
 description = "SDK for interacting with Data Platform API"
 readme = "README.md"
