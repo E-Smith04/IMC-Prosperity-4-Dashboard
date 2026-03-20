@@ -1,0 +1,15 @@
+include:
+  - ./infra/unity-catalog/docker-compose.yaml
+  - ./infra/spark/docker-compose.yaml
+
+services:
+  data-platform:
+    build:
+      context: ./data-platform
+      dockerfile: Dockerfile
+    environment:
+      SPARK_CONNECT_URL: ${SPARK_CONNECT_URL:-sc://spark-connect:15002}
+    ports:
+      - "80:80"
+    depends_on:
+      - spark-connect

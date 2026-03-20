@@ -6,7 +6,7 @@ spark = SparkSession.active()
 
 schema = StructType(
     [
-        StructField("day", StringType(), True),
+        StructField("day", IntegerType(), True),
         StructField("timestamp", IntegerType(), True),
         StructField("product", StringType(), True),
         StructField("bid_price_1", IntegerType(), True),
