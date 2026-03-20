@@ -1,0 +1,17 @@
+[project]
+name = "data-platform-py"
+version = "0.1.0"
+description = "SDK for interacting with Data Platform API"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "orjson>=3.11.7",
+    "pydantic>=2.12.5",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["data_platform_sdk"]
+
+[tool.hatch.build.targets.wheel.sources]
+"data_platform_sdk" = "src/data_platform_sdk"
