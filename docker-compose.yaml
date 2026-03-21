@@ -6,10 +6,20 @@ services:
   data-platform:
     build:
       context: ./data-platform
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     environment:
       SPARK_CONNECT_URL: ${SPARK_CONNECT_URL:-sc://spark-connect:15002}
     ports:
       - "80:80"
     depends_on:
       - spark-connect
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    depends_on:
+      - data-platform
+    environment:
+      DATA_PLATFORM_BASE_URL: ${DATA_PLATFORM_BASE_URL:-http://data-platform:80}
