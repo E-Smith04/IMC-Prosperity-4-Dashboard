@@ -4,7 +4,7 @@ from fastapi import Depends
 from pyspark.sql import SparkSession
 from typing import Annotated, Any
 
-from data_platform.app.dependencies import get_spark
+from data_platform.app.core.dependencies import get_spark
 from data_platform.app.schemas.trades import TradeFilters
 
 class TradesService:
