@@ -15,6 +15,6 @@ class SyncPricesClient:
     ) -> list[dict[str, Any]]:
         response = self.http.get(
             f"/prices/{round_num}",
-            params=filters.model_dump(exclude_none=True)
+            params=filters.model_dump(mode="json", exclude_none=True)
         )
         return response
