@@ -2,10 +2,6 @@
 
 set -e
 
-# Temporary fix
-echo "Waiting for spark connect server"
-sleep 40
-
 echo "Running pipelines..."
 
 spark-pipelines run \
