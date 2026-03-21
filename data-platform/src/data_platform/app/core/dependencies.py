@@ -6,4 +6,7 @@ def get_spark():
     spark = SparkSession.builder \
         .remote(settings.SPARK_CONNECT_URL) \
         .getOrCreate()
-    return spark
+    try:
+        yield spark
+    finally:
+        spark.stop()
