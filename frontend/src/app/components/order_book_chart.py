@@ -8,6 +8,7 @@ class OrderBookChart:
     def __init__(self, sidebar_state: SidebarState):
         self.round = sidebar_state.round
         self.show_trades = sidebar_state.show_trades
+        self.indicators = sidebar_state.indicators
         self.prices_filter = sidebar_state.price_filters
         self.trades_filter = sidebar_state.trade_filters
 
@@ -23,7 +24,6 @@ class OrderBookChart:
     def create_fig(self):
         fig = go.Figure()
 
-        self.add_mid_price(fig)
         self.add_bid_1(fig)
         self.add_bid_2(fig)
         self.add_bid_3(fig)
@@ -33,6 +33,10 @@ class OrderBookChart:
 
         if self.show_trades:
             self.add_trades(fig)
+        if self.indicators.show_mid_price:
+            self.add_mid_price(fig)
+        if self.indicators.show_mid_wall:
+            self.add_mid_wall(fig)
 
         fig.update_layout(
             title="Order Book Chart",
@@ -44,26 +48,6 @@ class OrderBookChart:
         )
 
         return fig
-
-    def add_mid_price(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
-
-        fig.add_trace(
-            go.Scatter(
-                x=df["timestamp"],
-                y=df["mid_price"],
-                mode="lines",
-                name="Mid Price",
-                line={
-                    "color": "lightgrey",
-                    "dash": "dash"
-                },
-                hovertemplate="<br>".join([
-                    "<b>Mid Price:</b> %{y}",
-                    "<extra></extra>"
-                ])
-            )
-        )
 
     def add_bid_1(self, fig: go.Figure):
         df = self.prices_service.read_prices(self.round, self.prices_filter)
@@ -221,6 +205,46 @@ class OrderBookChart:
                     "Quantity: %{customdata[0]}",
                     "Buyer: %{customdata[1]}",
                     "Seller: %{customdata[2]}",
+                    "<extra></extra>"
+                ])
+            )
+        )
+
+    def add_mid_price(self, fig: go.Figure):
+        df = self.prices_service.read_prices(self.round, self.prices_filter)
+
+        fig.add_trace(
+            go.Scatter(
+                x=df["timestamp"],
+                y=df["mid_price"],
+                mode="lines",
+                name="Mid Price",
+                line={
+                    "color": "lightgrey",
+                    "dash": "dash"
+                },
+                hovertemplate="<br>".join([
+                    "<b>Mid Price:</b> %{y}",
+                    "<extra></extra>"
+                ])
+            )
+        )
+
+    def add_mid_wall(self, fig: go.Figure):
+        df = self.prices_service.read_prices(self.round, self.prices_filter)
+
+        fig.add_trace(
+            go.Scatter(
+                x=df["timestamp"],
+                y=df["mid_wall"],
+                mode="lines",
+                name="Mid Wall",
+                line={
+                    "color": "lightgrey",
+                    "dash": "dash"
+                },
+                hovertemplate="<br>".join([
+                    "<b>Mid Wall:</b> %{y}",
                     "<extra></extra>"
                 ])
             )

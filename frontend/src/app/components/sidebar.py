@@ -1,5 +1,5 @@
 import streamlit as st
-from app.types import SidebarState
+from app.types import SidebarState, Indicators
 from data_platform_sdk.schema import PriceFilters, TradeFilters, Product
 
 
@@ -19,6 +19,7 @@ class Sidebar:
 
             day, product, timestamp_min, timestamp_max = self.load_shared_filters()
             show_trades, quantity_min, quantity_max = self.load_trade_filters()
+            indicators = self.load_indicators()
 
             price_filters = PriceFilters(
                 day=day,
@@ -39,37 +40,53 @@ class Sidebar:
             return SidebarState(
                 round=selected_round,
                 show_trades=show_trades,
+                indicators=indicators,
                 price_filters=price_filters,
                 trade_filters=trade_filters
             )
 
-    def load_shared_filters(self):
+    def load_shared_filters(self) -> tuple[int, Product, int, int]:
         st.subheader('Filters', divider='grey')
 
-        day = st.selectbox(
+        day: int = st.selectbox(
             'Day',
             (-2, -1),
             index=None,
             placeholder='Select Day'
         )
 
-        product_enum = st.selectbox(
+        product: Product = st.selectbox(
             'Product',
             list(Product),
             format_func=lambda prod: prod.name,
             index=None,
             placeholder='Select Product'
         )
-        product = product_enum.value if product_enum else None
 
-
-        timestamp_slider = st.slider('Timeframe', 0, 999900, (0, 10000), step=1000)
-        timestamp_min = timestamp_slider[0]
-        timestamp_max = timestamp_slider[1]
+        timestamp_slider: tuple[int, int] = st.slider(
+            'Timeframe',
+            0,
+            999900,
+            (0, 10000),
+            step=1000
+        )
+        timestamp_min: int = timestamp_slider[0]
+        timestamp_max: int = timestamp_slider[1]
 
         return day, product, timestamp_min, timestamp_max
 
-    def load_trade_filters(self):
+    def load_indicators(self) -> Indicators:
+        st.subheader('Indicators', divider='grey')
+
+        show_mid_price = st.checkbox('Mid Price')
+        show_mid_wall = st.checkbox('Mid Wall')
+
+        return Indicators(
+            show_mid_price=show_mid_price,
+            show_mid_wall=show_mid_wall
+        )
+
+    def load_trade_filters(self) -> tuple[bool, int, int]:
         st.subheader('Trade Filters', divider='grey')
 
         show_trades = st.checkbox('Show Trades')
