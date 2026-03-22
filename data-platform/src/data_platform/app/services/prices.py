@@ -14,7 +14,7 @@ class PricesService:
     def read_prices(self, round_num: int, price_filters: PriceFilters) -> list[dict[str, Any]]:
         filters_dict = price_filters.model_dump(mode="json", exclude_none=True)
 
-        table_name = f"imc_prosperity.bronze.prices_{round_num}"
+        table_name = f"imc_prosperity.gold.prices_{round_num}"
         query = f"SELECT * FROM {table_name}"
 
         where_clauses = []

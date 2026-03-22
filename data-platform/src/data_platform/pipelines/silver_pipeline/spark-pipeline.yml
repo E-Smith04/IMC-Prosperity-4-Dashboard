@@ -1,0 +1,8 @@
+
+name: silver_pipeline
+storage: file:///app/src/data_platform/pipelines/silver_pipeline/pipeline-storage
+catalog: imc_prosperity
+schema: silver
+libraries:
+  - glob:
+      include: transformations/**
