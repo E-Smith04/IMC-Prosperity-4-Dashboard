@@ -1,0 +1,8 @@
+
+name: gold_pipeline
+storage: file:///app/src/data_platform/pipelines/gold_pipeline/pipeline-storage
+catalog: imc_prosperity
+schema: gold
+libraries:
+  - glob:
+      include: transformations/**
