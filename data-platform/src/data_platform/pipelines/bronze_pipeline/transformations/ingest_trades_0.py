@@ -19,14 +19,14 @@ schema = StructType(
 )
 
 @dp.materialized_view(
-    name="imc_prosperity.bronze.trades_0",
+    name="trades_0",
     table_properties={
         "delta.feature.catalogManaged": "supported"
     },
     schema=schema,
     format="delta"
 )
-def trades_tutorial_raw() -> DataFrame:
+def ingest_trades_raw() -> DataFrame:
     return (
         spark.read
         .format("csv")

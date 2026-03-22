@@ -1,0 +1,8 @@
+
+name: bronze_pipeline
+storage: file:///app/src/data_platform/pipelines/bronze_pipeline/pipeline-storage
+catalog: imc_prosperity
+schema: bronze
+libraries:
+  - glob:
+      include: transformations/**
