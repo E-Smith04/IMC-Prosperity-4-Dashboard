@@ -1,6 +1,6 @@
 import streamlit as st
 from app.types import SidebarState, Indicators
-from data_platform_sdk.schema import PriceFilters, TradeFilters, Product
+from data_platform_sdk.schema import PriceFilters, TradeFilters, Product, NormaliseOption
 
 
 class Sidebar:
@@ -18,14 +18,17 @@ class Sidebar:
             )
 
             day, product, timestamp_min, timestamp_max = self.load_shared_filters()
-            show_trades, quantity_min, quantity_max = self.load_trade_filters()
             indicators = self.load_indicators()
+            normalise_option = self.load_normalise_option()
+            show_trades, quantity_min, quantity_max = self.load_trade_filters()
+
 
             price_filters = PriceFilters(
                 day=day,
                 product=product,
                 timestamp_min=timestamp_min,
                 timestamp_max=timestamp_max,
+                normalise_option=normalise_option
             )
 
             trade_filters = TradeFilters(
@@ -33,6 +36,7 @@ class Sidebar:
                 symbol=product,
                 timestamp_min=timestamp_min,
                 timestamp_max=timestamp_max,
+                normalise_option=normalise_option,
                 quantity_min=quantity_min,
                 quantity_max=quantity_max
             )
@@ -85,6 +89,19 @@ class Sidebar:
             show_mid_price=show_mid_price,
             show_mid_wall=show_mid_wall
         )
+
+    def load_normalise_option(self) -> NormaliseOption:
+        st.subheader('Normalise Option', divider='grey')
+
+        normalise_option = st.selectbox(
+            'Normalise',
+            list(NormaliseOption),
+            format_func=lambda option: option.name,
+            index=None,
+            placeholder='Select Normalise Option'
+        )
+
+        return normalise_option
 
     def load_trade_filters(self) -> tuple[bool, int, int]:
         st.subheader('Trade Filters', divider='grey')
