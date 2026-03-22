@@ -14,7 +14,11 @@ class TradesService:
     def read_trades(self, round_num: int, trade_filters: TradeFilters) -> list[dict[str, Any]]:
         filters_dict = trade_filters.model_dump(mode="json", exclude_none=True)
 
-        table_name = f"imc_prosperity.bronze.trades_{round_num}"
+        if trade_filters.normalise_option is not None:
+            table_name = f"imc_prosperity.gold.trades_{round_num}_normalised_{trade_filters.normalise_option.value}"
+        else:
+            table_name = f"imc_prosperity.bronze.trades_{round_num}"
+
         query = f"SELECT * FROM {table_name}"
 
         where_clauses = []
