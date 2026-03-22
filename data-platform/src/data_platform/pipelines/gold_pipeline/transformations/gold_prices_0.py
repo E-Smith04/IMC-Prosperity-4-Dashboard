@@ -12,7 +12,7 @@ spark = SparkSession.active()
     },
     format="delta"
 )
-def prices_tutorial_add_features() -> DataFrame:
+def prices_add_features() -> DataFrame:
     return (
         spark.read
         .table("imc_prosperity.silver.prices_0")
