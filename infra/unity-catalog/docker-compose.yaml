@@ -7,7 +7,7 @@ services:
       - "8080:8080"
     command: >
       sh -c "./bin/start-uc-server &
-             sleep 5 &&
+             sleep 7 &&
              ./bin/uc catalog create --name imc_prosperity &&
              ./bin/uc schema create --catalog imc_prosperity --name bronze &&
              ./bin/uc schema create --catalog imc_prosperity --name silver &&
