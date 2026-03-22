@@ -7,6 +7,7 @@ from app.types import SidebarState
 class OrderBookChart:
     def __init__(self, sidebar_state: SidebarState):
         self.round = sidebar_state.round
+        self.show_trades = sidebar_state.show_trades
         self.prices_filter = sidebar_state.price_filters
         self.trades_filter = sidebar_state.trade_filters
 
@@ -15,7 +16,7 @@ class OrderBookChart:
 
     def load(self):
         fig = self.create_fig()
-        event = st.plotly_chart(fig, on_select='rerun', selection_mode='points')
+        event = st.plotly_chart(fig, on_select="rerun", selection_mode="points")
         points = event.selection.points
         return points
 
@@ -30,12 +31,15 @@ class OrderBookChart:
         self.add_ask_2(fig)
         self.add_ask_3(fig)
 
+        if self.show_trades:
+            self.add_trades(fig)
+
         fig.update_layout(
-            title='Order Book Chart',
-            xaxis_title='Timestamp',
-            yaxis_title='Price',
-            legend_title='Markers',
-            hovermode='x unified',
+            title="Order Book Chart",
+            xaxis_title="Timestamp",
+            yaxis_title="Price",
+            legend_title="Markers",
+            hovermode="x unified",
             hoverdistance=1
         )
 
@@ -46,17 +50,17 @@ class OrderBookChart:
 
         fig.add_trace(
             go.Scatter(
-                x=df['timestamp'],
-                y=df['mid_price'],
-                mode='lines',
-                name='Mid Price',
-                line=dict(
-                    color='lightgrey',
-                    dash='dash'
-                ),
-                hovertemplate='<br>'.join([
-                    '<b>Mid Price:</b> %{y}',
-                    '<extra></extra>'
+                x=df["timestamp"],
+                y=df["mid_price"],
+                mode="lines",
+                name="Mid Price",
+                line={
+                    "color": "lightgrey",
+                    "dash": "dash"
+                },
+                hovertemplate="<br>".join([
+                    "<b>Mid Price:</b> %{y}",
+                    "<extra></extra>"
                 ])
             )
         )
@@ -66,17 +70,19 @@ class OrderBookChart:
 
         fig.add_trace(
             go.Scatter(
-                x=df['timestamp'],
-                y=df['bid_price_1'],
-                customdata=df['bid_volume_1'],
-                mode='markers',
-                marker={'color': 'blue'},
-                name=f'Bid 1',
-                hovertemplate='<br>'.join([
-                    '<b>Bid 1</b>',
-                    'Price: %{y}',
-                    'Volume: %{customdata}',
-                    '<extra></extra>'
+                x=df["timestamp"],
+                y=df["bid_price_1"],
+                customdata=df["bid_volume_1"],
+                mode="markers",
+                marker={
+                    "color": "blue"
+                },
+                name=f"Bid 1",
+                hovertemplate="<br>".join([
+                    "<b>Bid 1</b>",
+                    "Price: %{y}",
+                    "Volume: %{customdata}",
+                    "<extra></extra>"
                 ])
             )
         )
@@ -86,17 +92,19 @@ class OrderBookChart:
 
         fig.add_trace(
             go.Scatter(
-                x=df['timestamp'],
-                y=df['bid_price_2'],
-                customdata=df['bid_volume_2'],
-                mode='markers',
-                marker={'color': 'blue'},
-                name=f'Bid 2',
-                hovertemplate='<br>'.join([
-                    '<b>Bid 2</b>',
-                    'Price: %{y}',
-                    'Volume: %{customdata}',
-                    '<extra></extra>'
+                x=df["timestamp"],
+                y=df["bid_price_2"],
+                customdata=df["bid_volume_2"],
+                mode="markers",
+                marker={
+                    "color": "blue"
+                },
+                name="Bid 2",
+                hovertemplate="<br>".join([
+                    "<b>Bid 2</b>",
+                    "Price: %{y}",
+                    "Volume: %{customdata}",
+                    "<extra></extra>"
                 ])
             )
         )
@@ -106,17 +114,19 @@ class OrderBookChart:
 
         fig.add_trace(
             go.Scatter(
-                x=df['timestamp'],
-                y=df['bid_price_3'],
-                customdata=df['bid_volume_3'],
-                mode='markers',
-                marker={'color': 'blue'},
-                name=f'Bid 3',
-                hovertemplate='<br>'.join([
-                    '<b>Bid 3</b>',
-                    'Price: %{y}',
-                    'Volume: %{customdata}',
-                    '<extra></extra>'
+                x=df["timestamp"],
+                y=df["bid_price_3"],
+                customdata=df["bid_volume_3"],
+                mode="markers",
+                marker={
+                    "color": "blue"
+                },
+                name="Bid 3",
+                hovertemplate="<br>".join([
+                    "<b>Bid 3</b>",
+                    "Price: %{y}",
+                    "Volume: %{customdata}",
+                    "<extra></extra>"
                 ])
             )
         )
@@ -126,17 +136,19 @@ class OrderBookChart:
 
         fig.add_trace(
             go.Scatter(
-                x=df['timestamp'],
-                y=df['ask_price_1'],
-                customdata=df['ask_volume_1'],
-                mode='markers',
-                marker={'color': 'red'},
-                name=f'Ask 1',
-                hovertemplate='<br>'.join([
-                    '<b>Ask 1</b>',
-                    'Price: %{y}',
-                    'Volume: %{customdata}',
-                    '<extra></extra>'
+                x=df["timestamp"],
+                y=df["ask_price_1"],
+                customdata=df["ask_volume_1"],
+                mode="markers",
+                marker={
+                    "color": "red"
+                },
+                name="Ask 1",
+                hovertemplate="<br>".join([
+                    "<b>Ask 1</b>",
+                    "Price: %{y}",
+                    "Volume: %{customdata}",
+                    "<extra></extra>"
                 ])
             )
         )
@@ -146,17 +158,19 @@ class OrderBookChart:
 
         fig.add_trace(
             go.Scatter(
-                x=df['timestamp'],
-                y=df['ask_price_2'],
-                customdata=df['ask_volume_2'],
-                mode='markers',
-                marker={'color': 'red'},
-                name=f'Ask 2',
-                hovertemplate='<br>'.join([
-                    '<b>Ask 2</b>',
-                    'Price: %{y}',
-                    'Volume: %{customdata}',
-                    '<extra></extra>'
+                x=df["timestamp"],
+                y=df["ask_price_2"],
+                customdata=df["ask_volume_2"],
+                mode="markers",
+                marker={
+                    "color": "red"
+                },
+                name="Ask 2",
+                hovertemplate="<br>".join([
+                    "<b>Ask 2</b>",
+                    "Price: %{y}",
+                    "Volume: %{customdata}",
+                    "<extra></extra>"
                 ])
             )
         )
@@ -166,17 +180,48 @@ class OrderBookChart:
 
         fig.add_trace(
             go.Scatter(
-                x=df['timestamp'],
-                y=df['ask_price_3'],
-                customdata=df['ask_volume_3'],
-                mode='markers',
-                marker={'color': 'red'},
-                name=f'Ask 3',
-                hovertemplate='<br>'.join([
-                    '<b>Ask 3</b>',
-                    'Price: %{y}',
-                    'Volume: %{customdata}',
-                    '<extra></extra>'
+                x=df["timestamp"],
+                y=df["ask_price_3"],
+                customdata=df["ask_volume_3"],
+                mode="markers",
+                marker={
+                    "color": "red"
+                },
+                name=f"Ask 3",
+                hovertemplate="<br>".join([
+                    "<b>Ask 3</b>",
+                    "Price: %{y}",
+                    "Volume: %{customdata}",
+                    "<extra></extra>"
+                ])
+            )
+        )
+
+    def add_trades(self, fig: go.Figure):
+        df = self.trades_service.read_trades(self.round, self.trades_filter)
+
+        if df.empty:
+            return
+
+        fig.add_trace(
+            go.Scatter(
+                x=df["timestamp"],
+                y=df["price"],
+                customdata=df[["quantity", "buyer", "seller"]],
+                mode="markers",
+                marker={
+                    "symbol": "x",
+                    "size": 10,
+                    "color": "yellow"
+                },
+                name="Trade",
+                hovertemplate="<br>".join([
+                    "<b>Trade</b>",
+                    "Price: %{y}",
+                    "Quantity: %{customdata[0]}",
+                    "Buyer: %{customdata[1]}",
+                    "Seller: %{customdata[2]}",
+                    "<extra></extra>"
                 ])
             )
         )
