@@ -96,6 +96,11 @@ filter (such as clicking the plus on trade quantity) to get the app to rerun or 
 to create the catalogs and schemas aren't run. The setup for this isn't ideal, but you can go into the unity catalog
 docker compose file located in `infra/unity-catalog` and increase the sleep time seen in the command section.
 
+**Table already exists (or doesn't support truncates)** - I am unsure of the exact reason this error occurs but the
+pipelines seem to fail if the table already exists (instead of just refreshing them) so run `docker compose down` and
+`docker compose up -d` again to refresh the table data (I have purposely not saved the table data in a volume due to
+this error)
+
 **API not running** - This is likely to be because the data platform hasn't finished setting up yet. Simply wait for the
 pipelines to finish running. Go into the data platform container logs, and you should see `Running pipelines...` followed
 by `Pipelines complete. Starting API...` when it is finished. This may also take some time as spark needs to wait for
