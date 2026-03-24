@@ -13,6 +13,7 @@ services:
       - "80:80"
     depends_on:
       - spark-connect
+      - server
   frontend:
     build:
       context: .
