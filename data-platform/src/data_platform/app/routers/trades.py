@@ -9,10 +9,9 @@ router = APIRouter(
 )
 
 
-@router.get("/{round_num}")
-def read_trades(
-    round_num: int,
+@router.get("")
+def get_trades(
     trade_filters: Annotated[TradeFilters, Query()],
     service: Annotated[TradesService, Depends()]
 ) -> list[dict[str, Any]]:
-    return service.read_trades(round_num, trade_filters)
+    return service.read_trades(trade_filters)

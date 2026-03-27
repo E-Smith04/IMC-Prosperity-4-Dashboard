@@ -9,10 +9,9 @@ router = APIRouter(
 )
 
 
-@router.get("/{round_num}")
-def read_prices(
-    round_num: int,
+@router.get("")
+def get_prices(
     price_filters: Annotated[PriceFilters, Query()],
     service: Annotated[PricesService, Depends()]
 ) -> list[dict[str, Any]]:
-    return service.read_prices(round_num, price_filters)
+    return service.read_prices(price_filters)
