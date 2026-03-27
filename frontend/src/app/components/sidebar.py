@@ -24,6 +24,7 @@ class Sidebar:
 
 
             price_filters = PriceFilters(
+                round_number=selected_round,
                 day=day,
                 product=product,
                 timestamp_min=timestamp_min,
@@ -32,6 +33,7 @@ class Sidebar:
             )
 
             trade_filters = TradeFilters(
+                round_number=selected_round,
                 day=day,
                 symbol=product,
                 timestamp_min=timestamp_min,
@@ -42,7 +44,7 @@ class Sidebar:
             )
 
             return SidebarState(
-                round=selected_round,
+                round_number=selected_round,
                 show_trades=show_trades,
                 indicators=indicators,
                 price_filters=price_filters,

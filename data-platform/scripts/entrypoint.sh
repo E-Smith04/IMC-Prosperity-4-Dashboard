@@ -10,10 +10,6 @@ spark-pipelines run \
 
 spark-pipelines run \
     --remote "$SPARK_CONNECT_URL" \
-    --spec "src/data_platform/pipelines/silver_pipeline/spark-pipeline.yml"
-
-spark-pipelines run \
-    --remote "$SPARK_CONNECT_URL" \
     --spec "src/data_platform/pipelines/gold_pipeline/spark-pipeline.yml"
 
 spark-pipelines run \

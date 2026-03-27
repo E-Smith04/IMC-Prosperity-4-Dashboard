@@ -9,6 +9,6 @@ class TradesService:
         self.client = client
 
     @st.cache_data
-    def read_trades(_self, round_num: int, filters: TradeFilters) -> pd.DataFrame:
-        response = _self.client.trades.read_trades(round_num=round_num, filters=filters)
+    def get(_self, filters: TradeFilters) -> pd.DataFrame:
+        response = _self.client.trades.get(filters=filters)
         return pd.DataFrame(response)

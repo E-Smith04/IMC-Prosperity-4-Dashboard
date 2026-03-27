@@ -14,15 +14,8 @@ services:
              ./bin/uc schema create --catalog imc_prosperity --name gold
              wait"
     volumes:
-      - type: bind
-        source: ./etc/conf/server.properties
-        target: /opt/unitycatalog/etc/conf/server.properties
-      - type: bind
-        source: ./etc/conf/server.properties
-        target: /home/unitycatalog/etc/conf/server.properties
-#      - type: volume
-#        source: unitycatalog_data
-#        target: /home/unitycatalog/etc/data
+      - ./etc/conf/server.properties:/home/unitycatalog/etc/conf/server.properties
+#      - unitycatalog_data:/home/unitycatalog/etc/data
   unity-ui:
     image: docker.io/unitycatalog/unitycatalog-ui:main
     ports:

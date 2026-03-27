@@ -8,13 +8,12 @@ class SyncPricesClient:
     def __init__(self, http: SyncHttpClient) -> None:
         self.http = http
 
-    def read_prices(
+    def get(
         self,
-        round_num: int,
         filters: PriceFilters,
     ) -> list[dict[str, Any]]:
         response = self.http.get(
-            f"/prices/{round_num}",
+            f"/prices",
             params=filters.model_dump(mode="json", exclude_none=True)
         )
         return response

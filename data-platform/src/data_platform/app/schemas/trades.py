@@ -1,8 +1,8 @@
 from data_platform.app.schemas.shared import FiltersBase, Product
-from enum import Enum
+from enum import StrEnum
 
 
-class Traders(str, Enum):
+class Traders(StrEnum):
     pass
 
 

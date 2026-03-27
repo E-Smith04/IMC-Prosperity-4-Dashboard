@@ -1,6 +1,7 @@
 from pyspark import pipelines as dp
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
+from pyspark.sql.functions import input_file_name, regexp_extract
 
 spark = SparkSession.active()
 
@@ -26,22 +27,25 @@ schema = StructType(
     ]
 )
 
-@dp.materialized_view(
-    name="prices_0",
+@dp.table(
+    name="prices",
     table_properties={
         "delta.feature.catalogManaged": "supported"
     },
-    schema=schema,
     format="delta"
 )
-def ingest_prices_raw() -> DataFrame:
+def bronze_prices() -> DataFrame:
     return (
-        spark.read
+        spark.readStream
         .format("csv")
         .schema(schema)
-        .options(
-            delimiter=";",
-            header=True
+        .option("header", "true")
+        .option("delimiter", ";")
+        .load("./data/*/prices_*.csv")
+        .withColumn("source_file", input_file_name())
+        .withColumn(
+            "round",
+            regexp_extract("source_file", r"round_(\d+)", 1).cast("int")
         )
-        .load("./data/TUTORIAL_ROUND_1/prices_*.csv")
+        .drop("source_file")
     )

@@ -1,21 +1,22 @@
 from pydantic import BaseModel
-from enum import Enum
+from enum import StrEnum
 
 
-class Product(str, Enum):
+class Product(StrEnum):
     EMERALDS = "EMERALDS"
     TOMATOES = "TOMATOES"
 
 
-class Traders(str, Enum):
+class Traders(StrEnum):
     pass
 
 
-class NormaliseOption(str, Enum):
+class NormaliseOption(StrEnum):
     MID_WALL = "mid_wall"
 
 
 class FiltersBase(BaseModel):
+    round_number: int
     day: int | None = None
     timestamp_min: int | None = None
     timestamp_max: int | None = None

@@ -8,13 +8,12 @@ class SyncTradesClient:
     def __init__(self, http: SyncHttpClient) -> None:
         self.http = http
 
-    def read_trades(
+    def get(
         self,
-        round_num: int,
         filters: TradeFilters,
     ) -> list[dict[str, Any]]:
         response = self.http.get(
-            f"/trades/{round_num}",
+            f"/trades",
             params=filters.model_dump(mode="json", exclude_none=True)
         )
         return response

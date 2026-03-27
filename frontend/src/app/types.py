@@ -7,7 +7,7 @@ class Indicators(BaseModel):
     show_mid_wall: bool = False
 
 class SidebarState(BaseModel):
-    round: int
+    round_number: int
     show_trades: bool = False
     indicators: Indicators
     price_filters: PriceFilters

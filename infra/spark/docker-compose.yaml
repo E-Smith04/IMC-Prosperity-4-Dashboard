@@ -7,7 +7,11 @@ services:
     command: ["/opt/spark/sbin/start-connect-server.sh", "--wait", "--master", "local[*]"]
     volumes:
       - spark-data:/opt/spark/work-dir
+      - spark-jars:/opt/spark/jars
       - ../../data:/opt/spark/work-dir/data
       - ./conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf:ro
 volumes:
   spark-data:
+    driver: local
+  spark-jars:
+    driver: local

@@ -6,7 +6,7 @@ from app.types import SidebarState
 
 class OrderBookChart:
     def __init__(self, sidebar_state: SidebarState):
-        self.round = sidebar_state.round
+        self.round_number = sidebar_state.round_number
         self.show_trades = sidebar_state.show_trades
         self.indicators = sidebar_state.indicators
         self.prices_filter = sidebar_state.price_filters
@@ -50,7 +50,7 @@ class OrderBookChart:
         return fig
 
     def add_bid_1(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
@@ -72,7 +72,7 @@ class OrderBookChart:
         )
 
     def add_bid_2(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
@@ -94,7 +94,7 @@ class OrderBookChart:
         )
 
     def add_bid_3(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
@@ -116,7 +116,7 @@ class OrderBookChart:
         )
 
     def add_ask_1(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
@@ -138,7 +138,7 @@ class OrderBookChart:
         )
 
     def add_ask_2(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
@@ -160,7 +160,7 @@ class OrderBookChart:
         )
 
     def add_ask_3(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
@@ -182,7 +182,7 @@ class OrderBookChart:
         )
 
     def add_trades(self, fig: go.Figure):
-        df = self.trades_service.read_trades(self.round, self.trades_filter)
+        df = self.trades_service.get(self.trades_filter)
 
         if df.empty:
             return
@@ -211,7 +211,7 @@ class OrderBookChart:
         )
 
     def add_mid_price(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
@@ -231,7 +231,7 @@ class OrderBookChart:
         )
 
     def add_mid_wall(self, fig: go.Figure):
-        df = self.prices_service.read_prices(self.round, self.prices_filter)
+        df = self.prices_service.get(self.prices_filter)
 
         fig.add_trace(
             go.Scatter(
