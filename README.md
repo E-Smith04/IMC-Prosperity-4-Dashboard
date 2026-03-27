@@ -20,10 +20,14 @@ Hopefully, this dashboard helps you get started with your journey in IMC Prosper
 *This project is still in development and will be constantly changing throughout the competition (particularly to add
 the new data from each round as they become available)*
 
-## Quick Start
+---
+
+## Quickstart
 Install docker desktop from [here](https://docs.docker.com/desktop/) (or software to manage containers)
 - Clone the repository
 - From the root of the repository run `docker compose up -d`
+- If you need to refresh the application, avoid using `docker compose stop` and `docker compose start` as the spark pipelines have bugs which mean the tables
+will only create properly when fully refreshed by `docker compose down` and `docker compose up`
 
 This will start to build the images and containers for the application (this may take a while to set up on your computer
 for the first time). There may be delays for the data platform to set up as it needs to wait for the spark connect
@@ -34,6 +38,8 @@ User Interface Servers:
 - Unity Catalog UI - http://localhost:3000/
 
 _Refer to the sections below for more in depth detail_
+
+---
 
 ## Streamlit Frontend
 Once the pipelines have completed (check the logs of the data platform container, and you should see that the API has
@@ -57,7 +63,7 @@ users, run `source .venv/bin/activate`).
 *This is a monorepo with multiple environments so please ensure you are using the correct one*
 
 The pipelines in the data platform follow the medallion architecture (bronze, silver, gold) so use the bronze tables if
-you want to look at the original data (the only change is that a day column has been added to the trades table). The
+you want to look at the original data (the only change is that round and day columns have been added). The
 catalogs, schemas and tables are managed by unity catalog so look through the Unity Catalog UI: http://localhost:3000/
 to see what tables are available to you (ignore the default unity catalog)
 
@@ -72,18 +78,20 @@ spark = SparkSession.builder.remote("sc://localhost:15002")
 
 You can then use SQL to query tables
 ```python
-df = spark.sql("SELECT * FROM imc_prosperity.bronze.prices_0")
+df = spark.sql("SELECT * FROM imc_prosperity.bronze.prices")
 # Continue with spark if you prefer using SQL
 ```
 
 You can also convert to a pandas dataframe if you prefer
 ```python
-df = spark.sql("SELECT * FROM imc_prosperity.bronze.prices_0")
+df = spark.sql("SELECT * FROM imc_prosperity.bronze.prices")
 pandas_df = df.toPandas()
 ```
 
 Several packages such as `matplotlib` and `scikit-learn` have already been installed but feel free to install any extra
 packages that you need.
+
+---
 
 ## Bugs
 This is a solo project which may contain a lot of bugs. If your problem isn't listed then please feel free to contact me
