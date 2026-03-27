@@ -13,33 +13,33 @@ schema = StructType(
         StructField("symbol", StringType(), True),
         StructField("currency", StringType(), True),
         StructField("price", FloatType(), True),
-        StructField("quantity", IntegerType(), True),
-        StructField("day", IntegerType(), True),
+        StructField("quantity", IntegerType(), True)
     ]
 )
 
-@dp.materialized_view(
-    name="trades_0",
+@dp.table(
+    name="trades",
     table_properties={
         "delta.feature.catalogManaged": "supported"
     },
-    schema=schema,
     format="delta"
 )
-def ingest_trades_raw() -> DataFrame:
+def bronze_trades() -> DataFrame:
     return (
-        spark.read
+        spark.readStream
         .format("csv")
         .schema(schema)
-        .options(
-            delimiter=";",
-            header=True
-        )
-        .load("./data/TUTORIAL_ROUND_1/trades_*.csv")
+        .option("header", "true")
+        .option("delimiter", ";")
+        .load("./data/*/trades_*.csv")
         .withColumn("source_file", input_file_name())
         .withColumn(
+            "round",
+            regexp_extract("source_file", r"round_(\d+)", 1).cast("int")
+        )
+        .withColumn(
             "day",
-            regexp_extract(col("source_file"), r"day_(-?\d+)\.csv", 1).cast(IntegerType())
+            regexp_extract("source_file", r"day_(-?\d+)", 1).cast("int")
         )
         .drop("source_file")
     )
