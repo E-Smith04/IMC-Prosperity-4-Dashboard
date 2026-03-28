@@ -6,6 +6,7 @@ class Indicators(BaseModel):
     show_mid_price: bool = False
     show_mid_wall: bool = False
 
+
 class SidebarState(BaseModel):
     round_number: int
     show_trades: bool = False

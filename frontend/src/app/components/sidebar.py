@@ -57,7 +57,6 @@ class Sidebar:
         day: int = st.selectbox(
             'Day',
             (-2, -1),
-            index=None,
             placeholder='Select Day'
         )
 
@@ -65,7 +64,6 @@ class Sidebar:
             'Product',
             list(Product),
             format_func=lambda prod: prod.name,
-            index=None,
             placeholder='Select Product'
         )
 

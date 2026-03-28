@@ -3,8 +3,8 @@ from __future__ import annotations
 import httpx
 
 from data_platform_sdk._sync.http import SyncHttpClient
-from data_platform_sdk._sync.prices import SyncPricesClient
-from data_platform_sdk._sync.trades import SyncTradesClient
+from data_platform_sdk._sync.historical import SyncHistoricalClient
+from data_platform_sdk._sync.logs import SyncLogsClient
 
 
 def get_sync_client(
@@ -19,8 +19,8 @@ def get_sync_client(
 class SyncDataPlatformClient:
     def __init__(self, client: httpx.Client) -> None:
         self.http = SyncHttpClient(client)
-        self.prices: SyncPricesClient = SyncPricesClient(self.http)
-        self.trades: SyncTradesClient = SyncTradesClient(self.http)
+        self.historical: SyncHistoricalClient = SyncHistoricalClient(self.http)
+        self.logs: SyncLogsClient = SyncLogsClient(self.http)
 
     def __enter__(self) -> SyncDataPlatformClient:
         return self

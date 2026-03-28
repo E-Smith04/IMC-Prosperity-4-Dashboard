@@ -1,2 +1,2 @@
-from .prices import PricesService
-from .trades import TradesService
+from .historical import HistoricalService
+from .logs import LogsService
