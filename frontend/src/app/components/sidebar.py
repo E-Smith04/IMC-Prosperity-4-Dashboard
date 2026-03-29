@@ -1,99 +1,173 @@
 import streamlit as st
-from app.types import SidebarState, Indicators
-from data_platform_sdk.schema import PriceFilters, TradeFilters, Product, NormaliseOption
-
+import json
+from typing import Literal
+from app.services import LogsService
+from app.types import SidebarState, Indicators, HistoricalFilters, LogsFilters
+from data_platform_sdk.schema import (
+    PriceFilters,
+    TradeFilters,
+    Product,
+    NormaliseOption,
+    Traders,
+    LogsPriceFilters,
+    LogsTradeFilters,
+    LogsOrderFilters
+)
 
 class Sidebar:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, mode: Literal['historical', 'logs']) -> None:
+        self.mode = mode
+
+        self.round_number: int | None = None
+        self.day: int | None = None
+        self.product: Product | None = None
+        self.timestamp_min: int | None = None
+        self.timestamp_max: int | None = None
+        self.quantity_min: int | None = None
+        self.quantity_max: int | None = None
+        self.buyers: list[Traders] | None = None
+        self.sellers: list[Traders] | None = None
+        self.normalise_option: NormaliseOption | None = None
+        self.indicators: Indicators = Indicators()
+        self.show_trades: bool = False
+        self.show_orders: bool = False
+        self.logs_uploaded: bool = False
+
+        self.logs_service: LogsService = st.session_state.logs_service
 
     def load(self) -> SidebarState:
         with st.sidebar:
-            st.subheader('Options', divider='grey')
-
-            selected_round = st.selectbox(
-                'Round',
-                (0),
-                placeholder='Select Round'
-            )
-
-            day, product, timestamp_min, timestamp_max = self.load_shared_filters()
-            indicators = self.load_indicators()
-            normalise_option = self.load_normalise_option()
-            show_trades, quantity_min, quantity_max = self.load_trade_filters()
+            if self.mode == 'historical':
+                self.load_file_options()
+                self.load_shared_filters()
+                self.load_indicators()
+                self.load_normalise_option()
+                self.load_trade_filters()
 
 
-            price_filters = PriceFilters(
-                round_number=selected_round,
-                day=day,
-                product=product,
-                timestamp_min=timestamp_min,
-                timestamp_max=timestamp_max,
-                normalise_option=normalise_option
-            )
+                price_filters = PriceFilters(
+                    round_number=self.round_number,
+                    day=self.day,
+                    product=self.product,
+                    timestamp_min=self.timestamp_min,
+                    timestamp_max=self.timestamp_max,
+                    normalise_option=self.normalise_option
+                )
 
-            trade_filters = TradeFilters(
-                round_number=selected_round,
-                day=day,
-                symbol=product,
-                timestamp_min=timestamp_min,
-                timestamp_max=timestamp_max,
-                normalise_option=normalise_option,
-                quantity_min=quantity_min,
-                quantity_max=quantity_max
-            )
+                trade_filters = TradeFilters(
+                    round_number=self.round_number,
+                    day=self.day,
+                    symbol=self.product,
+                    timestamp_min=self.timestamp_min,
+                    timestamp_max=self.timestamp_max,
+                    normalise_option=self.normalise_option,
+                    quantity_min=self.quantity_min,
+                    quantity_max=self.quantity_max
+                )
+
+                filters = HistoricalFilters(
+                    price_filters=price_filters,
+                    trade_filters=trade_filters,
+                )
+
+            else:
+                logs_file = st.file_uploader("Upload logs")
+                if logs_file is not None:
+                    logs_json = json.load(logs_file)
+
+                    if logs_json["submissionId"] != st.session_state.logs_submission_id:
+                        self.logs_service.upload_logs(logs_json)
+                        st.session_state.logs_submission_id = logs_json["submissionId"]
+
+                    self.logs_uploaded = True
+
+                self.load_shared_filters()
+                self.load_trade_filters()
+                self.load_order_filters()
+
+                price_filters = LogsPriceFilters(
+                    timestamp_min=self.timestamp_min,
+                    timestamp_max=self.timestamp_max,
+                    product=self.product,
+                )
+
+                trade_filters = LogsTradeFilters(
+                    symbol=self.product,
+                    timestamp_min=self.timestamp_min,
+                    timestamp_max=self.timestamp_max,
+                    quantity_min=self.quantity_min,
+                    quantity_max=self.quantity_max
+                )
+
+                order_filters = LogsOrderFilters(
+                    timestamp_min=self.timestamp_min,
+                    timestamp_max=self.timestamp_max,
+                    symbol=self.product,
+                )
+
+                filters = LogsFilters(
+                    price_filters=price_filters,
+                    trade_filters=trade_filters,
+                    order_filters=order_filters
+                )
 
             return SidebarState(
-                round_number=selected_round,
-                show_trades=show_trades,
-                indicators=indicators,
-                price_filters=price_filters,
-                trade_filters=trade_filters
+                mode=self.mode,
+                logs_uploaded=self.logs_uploaded,
+                show_trades=self.show_trades,
+                show_orders=self.show_orders,
+                indicators=self.indicators,
+                filters=filters
             )
 
-    def load_shared_filters(self) -> tuple[int, Product, int, int]:
-        st.subheader('Filters', divider='grey')
+    def load_file_options(self) -> None:
+        st.subheader('Options', divider='grey')
 
-        day: int = st.selectbox(
+        self.round_number = st.selectbox(
+            'Round',
+            (0),
+            placeholder='Select Round'
+        )
+
+        self.day = st.selectbox(
             'Day',
             (-2, -1),
             placeholder='Select Day'
         )
 
-        product: Product = st.selectbox(
+    def load_shared_filters(self) -> None:
+        st.subheader('Filters', divider='grey')
+
+        self.product = st.selectbox(
             'Product',
             list(Product),
             format_func=lambda prod: prod.name,
             placeholder='Select Product'
         )
 
-        timestamp_slider: tuple[int, int] = st.slider(
+        self.timestamp_min, self.timestamp_max = st.slider(
             'Timeframe',
             0,
-            999900,
+            999900 if self.mode == 'historical' else 199900,
             (0, 10000),
             step=1000
         )
-        timestamp_min: int = timestamp_slider[0]
-        timestamp_max: int = timestamp_slider[1]
 
-        return day, product, timestamp_min, timestamp_max
-
-    def load_indicators(self) -> Indicators:
+    def load_indicators(self) -> None:
         st.subheader('Indicators', divider='grey')
 
         show_mid_price = st.checkbox('Mid Price')
         show_mid_wall = st.checkbox('Mid Wall')
 
-        return Indicators(
+        self.indicators = Indicators(
             show_mid_price=show_mid_price,
             show_mid_wall=show_mid_wall
         )
 
-    def load_normalise_option(self) -> NormaliseOption:
+    def load_normalise_option(self) -> None:
         st.subheader('Normalise Option', divider='grey')
 
-        normalise_option = st.selectbox(
+        self.normalise_option = st.selectbox(
             'Normalise',
             list(NormaliseOption),
             format_func=lambda option: option.name,
@@ -101,13 +175,16 @@ class Sidebar:
             placeholder='Select Normalise Option'
         )
 
-        return normalise_option
-
-    def load_trade_filters(self) -> tuple[bool, int, int]:
+    def load_trade_filters(self) -> None:
         st.subheader('Trade Filters', divider='grey')
 
-        show_trades = st.checkbox('Show Trades')
-        quantity_min = st.number_input('Min Quantity', min_value=0, step=1)
-        quantity_max = st.number_input('Max Quantity', min_value=0, step=1, value=20)
+        self.show_trades = st.checkbox('Show Trades')
+        self.quantity_min = st.number_input('Min Quantity', min_value=0, step=1)
+        self.quantity_max = st.number_input('Max Quantity', min_value=0, step=1, value=20)
 
-        return show_trades, quantity_min, quantity_max
+    def load_order_filters(self) -> None:
+        st.subheader('Order Filters', divider='grey')
+
+        self.show_orders = st.checkbox('Show Orders')
+
+

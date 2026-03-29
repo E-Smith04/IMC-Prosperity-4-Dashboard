@@ -11,7 +11,8 @@ services:
              ./bin/uc catalog create --name imc_prosperity &&
              ./bin/uc schema create --catalog imc_prosperity --name bronze &&
              ./bin/uc schema create --catalog imc_prosperity --name silver &&
-             ./bin/uc schema create --catalog imc_prosperity --name gold
+             ./bin/uc schema create --catalog imc_prosperity --name gold &&
+             ./bin/uc schema create --catalog imc_prosperity --name logs
              wait"
     volumes:
       - ./etc/conf/server.properties:/home/unitycatalog/etc/conf/server.properties

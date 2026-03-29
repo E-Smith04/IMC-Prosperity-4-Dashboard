@@ -1,5 +1,17 @@
 from pydantic import BaseModel
-from data_platform_sdk.schema import PriceFilters, TradeFilters
+from typing import Literal
+from data_platform_sdk.schema import PriceFilters, TradeFilters, LogsPriceFilters, LogsTradeFilters, LogsOrderFilters
+
+
+class HistoricalFilters(BaseModel):
+    price_filters: PriceFilters
+    trade_filters: TradeFilters
+
+
+class LogsFilters(BaseModel):
+    price_filters: LogsPriceFilters
+    trade_filters: LogsTradeFilters
+    order_filters: LogsOrderFilters
 
 
 class Indicators(BaseModel):
@@ -8,8 +20,9 @@ class Indicators(BaseModel):
 
 
 class SidebarState(BaseModel):
-    round_number: int
+    mode: Literal['historical', 'logs']
+    logs_uploaded: bool = False
     show_trades: bool = False
+    show_orders: bool = False
     indicators: Indicators
-    price_filters: PriceFilters
-    trade_filters: TradeFilters
+    filters: HistoricalFilters | LogsFilters

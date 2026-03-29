@@ -1,14 +1,11 @@
 import streamlit as st
 from app.core.session_state import init_session_state
-from app.components import Sidebar, OrderBookChart
-
-st.set_page_config(layout="wide")
-st.title("IMC Prosperity 4 Dashboard")
 
 init_session_state()
 
-sidebar = Sidebar()
-sidebar_state = sidebar.load()
+historical_page = st.Page("app/pages/historical.py", title="Historical", icon=":material/analytics:")
+logs_page = st.Page("app/pages/logs.py", title="Logs", icon=":material/notes:")
 
-order_book_chart = OrderBookChart(sidebar_state)
-order_book_chart.load()
+pg = st.navigation([historical_page, logs_page])
+st.set_page_config(page_title="IMC Prosperity 4 Dashboard", layout="wide")
+pg.run()

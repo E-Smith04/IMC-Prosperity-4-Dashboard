@@ -42,6 +42,22 @@ class TradeFilters(Filters):
     normalise_option: NormaliseOption | None = None
 
 
+class LogsPriceFilters(Filters):
+    product: Product | None = None
+
+
+class LogsTradeFilters(Filters):
+    symbol: Product | None = None
+    quantity_min: int | None = None
+    quantity_max: int | None = None
+    buyers: list[Traders] | None = None
+    sellers: list[Traders] | None = None
+
+
+class LogsOrderFilters(Filters):
+    symbol: Product | None = None
+
+
 class LogsUpload(BaseModel):
     submissionId: str
     activitiesLog: str

@@ -1,18 +1,26 @@
 import streamlit as st
 import plotly.graph_objects as go
-from app.services import HistoricalService
+from app.services import HistoricalService, LogsService
 from app.types import SidebarState
 
 
 class OrderBookChart:
     def __init__(self, sidebar_state: SidebarState):
-        self.round_number = sidebar_state.round_number
         self.show_trades = sidebar_state.show_trades
+        self.show_orders = sidebar_state.show_orders
         self.indicators = sidebar_state.indicators
-        self.prices_filter = sidebar_state.price_filters
-        self.trades_filter = sidebar_state.trade_filters
+        self.filters = sidebar_state.filters
 
         self.historical_service: HistoricalService = st.session_state.historical_service
+        self.logs_service: LogsService = st.session_state.logs_service
+
+        if sidebar_state.mode == 'historical':
+            self.prices = self.historical_service.get_prices(self.filters.price_filters)
+            self.trades = self.historical_service.get_trades(self.filters.trade_filters)
+        else:
+            self.prices = self.logs_service.get_prices(self.filters.price_filters)
+            self.trades = self.logs_service.get_trades(self.filters.trade_filters)
+            self.orders = self.logs_service.get_orders(self.filters.order_filters)
 
     def load(self):
         fig = self.create_fig()
@@ -32,6 +40,8 @@ class OrderBookChart:
 
         if self.show_trades:
             self.add_trades(fig)
+        if self.show_orders:
+            self.add_orders(fig)
         if self.indicators.show_mid_price:
             self.add_mid_price(fig)
         if self.indicators.show_mid_wall:
@@ -49,7 +59,7 @@ class OrderBookChart:
         return fig
 
     def add_bid_1(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
@@ -71,7 +81,7 @@ class OrderBookChart:
         )
 
     def add_bid_2(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
@@ -93,7 +103,7 @@ class OrderBookChart:
         )
 
     def add_bid_3(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
@@ -115,7 +125,7 @@ class OrderBookChart:
         )
 
     def add_ask_1(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
@@ -137,7 +147,7 @@ class OrderBookChart:
         )
 
     def add_ask_2(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
@@ -159,7 +169,7 @@ class OrderBookChart:
         )
 
     def add_ask_3(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
@@ -181,7 +191,7 @@ class OrderBookChart:
         )
 
     def add_trades(self, fig: go.Figure):
-        df = self.historical_service.get_trades(self.trades_filter)
+        df = self.trades
 
         if df.empty:
             return
@@ -209,8 +219,35 @@ class OrderBookChart:
             )
         )
 
+    def add_orders(self, fig: go.Figure):
+        df = self.orders
+
+        if df.empty:
+            return
+
+        fig.add_trace(
+            go.Scatter(
+                x=df["timestamp"],
+                y=df["price"],
+                customdata=df["quantity"],
+                mode="markers",
+                marker={
+                    "symbol": "x",
+                    "size": 10,
+                    "color": "green"
+                },
+                name="Order",
+                hovertemplate="<br>".join([
+                    "<b>Order</b>",
+                    "Price: %{y}",
+                    "Quantity: %{customdata}",
+                    "<extra></extra>"
+                ])
+            )
+        )
+
     def add_mid_price(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
@@ -230,7 +267,7 @@ class OrderBookChart:
         )
 
     def add_mid_wall(self, fig: go.Figure):
-        df = self.historical_service.get_prices(self.prices_filter)
+        df = self.prices
 
         fig.add_trace(
             go.Scatter(
