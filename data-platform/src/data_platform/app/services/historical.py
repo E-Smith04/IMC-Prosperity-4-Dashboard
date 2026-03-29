@@ -33,7 +33,7 @@ class HistoricalService:
         self.spark = spark
 
     def get_prices(self, price_filters: PriceFilters) -> list[dict[str, Any]]:
-        table_name = f"imc_prosperity.gold.prices"
+        table_name = "imc_prosperity.gold.prices"
         if price_filters.normalise_option is not None:
             table_name += f"_normalised_{price_filters.normalise_option}"
 
@@ -68,7 +68,11 @@ class HistoricalService:
         if where_clauses:
             query += " WHERE " + " AND ".join(where_clauses)
 
-        df = self.spark.sql(query, **sql_params)
+        try:
+            df = self.spark.sql(query, **sql_params)
+        except Exception:
+            return []
+
         pdf = df.toPandas()
         pdf = pdf.replace({np.nan: None})
         return pdf.to_dict(orient="records")
