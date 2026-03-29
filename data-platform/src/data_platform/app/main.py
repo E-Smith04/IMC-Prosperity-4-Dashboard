@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from data_platform.app.routers import prices, trades
+from data_platform.app.routers import historical, logs
 
 app = FastAPI()
 
-app.include_router(prices.router)
-app.include_router(trades.router)
+app.include_router(historical.router)
+app.include_router(logs.router)
 
 if __name__ == '__main__':
     import uvicorn

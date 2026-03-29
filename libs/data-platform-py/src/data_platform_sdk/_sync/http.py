@@ -17,6 +17,16 @@ class SyncHttpClient:
         response.raise_for_status()
         return _decode_json(response)
 
+    def put(
+        self,
+        path: str,
+        *,
+        json: dict[str, Any] | None = None
+    ) -> Any:
+        response = self.client.put(path, json=json)
+        response.raise_for_status()
+        return _decode_json(response)
+
 
 def _decode_json(response: httpx.Response) -> Any:
     body = response.read()

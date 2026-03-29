@@ -1,2 +1,2 @@
-from app.services.prices import PricesService
-from app.services.trades import TradesService
+from app.services.historical import HistoricalService
+from app.services.logs import LogsService
