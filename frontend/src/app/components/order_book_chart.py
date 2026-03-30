@@ -53,7 +53,8 @@ class OrderBookChart:
             yaxis_title="Price",
             legend_title="Markers",
             hovermode="x unified",
-            hoverdistance=1
+            hoverdistance=1,
+            showlegend=True
         )
 
         return fig

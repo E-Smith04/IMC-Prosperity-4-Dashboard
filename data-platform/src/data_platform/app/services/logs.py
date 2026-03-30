@@ -24,7 +24,7 @@ _TRADE_CLAUSES: dict[str, str] = {
     "sellers": "sellers IN {sellers}",
 }
 
-_Order_CLAUSES: dict[str, str] = {
+_ORDER_CLAUSES: dict[str, str] = {
     "timestamp_min": "timestamp >= {timestamp_min}",
     "timestamp_max": "timestamp <= {timestamp_max}",
     "symbol": "symbol = {symbol}",
@@ -38,7 +38,16 @@ class LogsService:
     def upload(self, logs: LogsUpload) -> None:
         activities_log = StringIO(logs.activitiesLog)
         activities_log_df = pd.read_csv(activities_log, sep=";")
-        self._create_table("imc_prosperity.logs.prices", activities_log_df)
+        prices_df = (
+            activities_log_df
+            .merge(
+                pd.DataFrame(logs.flattened_positions),
+                on=["timestamp", "product"],
+                how="left"
+            )
+            .assign(position=lambda d: d["position"].fillna(0).astype(int))
+        )
+        self._create_table("imc_prosperity.logs.prices", prices_df)
 
         trade_history = logs.tradeHistory
         self._create_table("imc_prosperity.logs.trades", trade_history)
@@ -59,7 +68,7 @@ class LogsService:
     def get_orders(self, order_filters: LogsOrderFilters) -> list[dict[str, Any]]:
         table_name = "imc_prosperity.logs.orders"
 
-        return self._execute_query(table_name, order_filters, _Order_CLAUSES)
+        return self._execute_query(table_name, order_filters, _ORDER_CLAUSES)
 
     def _execute_query(
             self,
