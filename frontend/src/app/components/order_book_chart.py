@@ -38,10 +38,10 @@ class OrderBookChart:
         self.add_ask_2(fig)
         self.add_ask_3(fig)
 
-        if self.show_trades:
-            self.add_trades(fig)
         if self.show_orders:
             self.add_orders(fig)
+        if self.show_trades:
+            self.add_trades(fig)
         if self.indicators.show_mid_price:
             self.add_mid_price(fig)
         if self.indicators.show_mid_wall:
@@ -197,10 +197,60 @@ class OrderBookChart:
         if df.empty:
             return
 
+        submission_buys = df[df["buyer"] == "SUBMISSION"]
+        submission_sells = df[df["seller"] == "SUBMISSION"]
+        market_trades = df[(df["buyer"] != "SUBMISSION") & (df["seller"] != "SUBMISSION")]
+
         fig.add_trace(
             go.Scatter(
-                x=df["timestamp"],
-                y=df["price"],
+                x=submission_buys["timestamp"],
+                y=submission_buys["price"],
+                customdata=df[["quantity", "buyer", "seller"]],
+                mode="markers",
+                marker={
+                    "symbol": "triangle-up",
+                    "size": 15,
+                    "color": "lime"
+                },
+                name="Buy Trade",
+                hovertemplate="<br>".join([
+                    "<b>Buy Trade</b>",
+                    "Price: %{y}",
+                    "Quantity: %{customdata[0]}",
+                    "Buyer: %{customdata[1]}",
+                    "Seller: %{customdata[2]}",
+                    "<extra></extra>"
+                ])
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=submission_sells["timestamp"],
+                y=submission_sells["price"],
+                customdata=df[["quantity", "buyer", "seller"]],
+                mode="markers",
+                marker={
+                    "symbol": "triangle-down",
+                    "size": 15,
+                    "color": "orange"
+                },
+                name="Sell Trade",
+                hovertemplate="<br>".join([
+                    "<b>Sell Trade</b>",
+                    "Price: %{y}",
+                    "Quantity: %{customdata[0]}",
+                    "Buyer: %{customdata[1]}",
+                    "Seller: %{customdata[2]}",
+                    "<extra></extra>"
+                ])
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=market_trades["timestamp"],
+                y=market_trades["price"],
                 customdata=df[["quantity", "buyer", "seller"]],
                 mode="markers",
                 marker={
@@ -208,9 +258,9 @@ class OrderBookChart:
                     "size": 10,
                     "color": "yellow"
                 },
-                name="Trade",
+                name="Market Trade",
                 hovertemplate="<br>".join([
-                    "<b>Trade</b>",
+                    "<b>Market Trade</b>",
                     "Price: %{y}",
                     "Quantity: %{customdata[0]}",
                     "Buyer: %{customdata[1]}",
@@ -226,20 +276,44 @@ class OrderBookChart:
         if df.empty:
             return
 
+        buy_orders = df[df["quantity"] > 0]
+        sell_orders = df[df["quantity"] < 0]
+
         fig.add_trace(
             go.Scatter(
-                x=df["timestamp"],
-                y=df["price"],
-                customdata=df["quantity"],
+                x=buy_orders["timestamp"],
+                y=buy_orders["price"],
+                customdata=buy_orders["quantity"],
                 mode="markers",
                 marker={
-                    "symbol": "x",
+                    "symbol": "triangle-up-open",
                     "size": 10,
-                    "color": "green"
+                    "color": "darkgreen"
                 },
-                name="Order",
+                name="Buy Order",
                 hovertemplate="<br>".join([
-                    "<b>Order</b>",
+                    "<b>Buy Order</b>",
+                    "Price: %{y}",
+                    "Quantity: %{customdata}",
+                    "<extra></extra>"
+                ])
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=sell_orders["timestamp"],
+                y=sell_orders["price"],
+                customdata=sell_orders["quantity"],
+                mode="markers",
+                marker={
+                    "symbol": "triangle-down-open",
+                    "size": 10,
+                    "color": "maroon"
+                },
+                name="Sell Order",
+                hovertemplate="<br>".join([
+                    "<b>Sell Order</b>",
                     "Price: %{y}",
                     "Quantity: %{customdata}",
                     "<extra></extra>"
