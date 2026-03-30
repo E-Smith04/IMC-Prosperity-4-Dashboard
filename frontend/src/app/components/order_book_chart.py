@@ -205,7 +205,7 @@ class OrderBookChart:
             go.Scatter(
                 x=submission_buys["timestamp"],
                 y=submission_buys["price"],
-                customdata=df[["quantity", "buyer", "seller"]],
+                customdata=submission_buys[["quantity", "buyer", "seller"]],
                 mode="markers",
                 marker={
                     "symbol": "triangle-up",
@@ -228,7 +228,7 @@ class OrderBookChart:
             go.Scatter(
                 x=submission_sells["timestamp"],
                 y=submission_sells["price"],
-                customdata=df[["quantity", "buyer", "seller"]],
+                customdata=submission_sells[["quantity", "buyer", "seller"]],
                 mode="markers",
                 marker={
                     "symbol": "triangle-down",
@@ -251,7 +251,7 @@ class OrderBookChart:
             go.Scatter(
                 x=market_trades["timestamp"],
                 y=market_trades["price"],
-                customdata=df[["quantity", "buyer", "seller"]],
+                customdata=market_trades[["quantity", "buyer", "seller"]],
                 mode="markers",
                 marker={
                     "symbol": "x",
