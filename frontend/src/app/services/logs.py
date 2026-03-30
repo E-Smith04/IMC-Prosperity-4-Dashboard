@@ -10,6 +10,10 @@ class LogsService:
         self.client = client
 
     def upload_logs(self, raw_logs: dict[str, Any]) -> None:
+        self.get_prices.clear()
+        self.get_trades.clear()
+        self.get_orders.clear()
+
         logs = LogsUpload.model_validate(raw_logs)
         self.client.logs.upload(logs)
 

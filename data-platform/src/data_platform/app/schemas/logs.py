@@ -21,6 +21,10 @@ class LogsOrderFilters(Filters):
     symbol: Product | None = None
 
 
+class LogsStateFilters(Filters):
+    symbol: Product | None = None
+
+
 class LogsUpload(BaseModel):
     submissionId: str
     activitiesLog: str
@@ -33,6 +37,14 @@ class LogsUpload(BaseModel):
             {"timestamp": log.timestamp} | order.model_dump()
             for log in self.logs
             for order in log.lambdaLog.orders
+        ]
+
+    @computed_field
+    def flattened_positions(self) -> list[dict[str, Any]]:
+        return [
+            {"timestamp": log.timestamp} | {"product": product, "position": position}
+            for log in self.logs
+            for product, position in log.lambdaLog.state.position.items()
         ]
 
 
