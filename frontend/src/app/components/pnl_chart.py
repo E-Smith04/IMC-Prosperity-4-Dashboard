@@ -11,9 +11,7 @@ class PnlChart:
         self.logs_service: LogsService = st.session_state.logs_service
         self.prices = self.logs_service.get_prices(self.filters.price_filters)
 
-    def load(self):
-        fig = self.create_fig()
-        st.plotly_chart(fig, on_select="ignore", selection_mode="points")
+        self.fig = self.create_fig()
 
     def create_fig(self):
         fig = go.Figure()
