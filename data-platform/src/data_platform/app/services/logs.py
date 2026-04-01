@@ -46,6 +46,11 @@ class LogsService:
                 how="left"
             )
             .assign(position=lambda d: d["position"].fillna(0).astype(int))
+            .assign(
+                total_bid_volume=lambda d: d[["bid_volume_1", "bid_volume_2", "bid_volume_3"]].sum(axis=1),
+                total_ask_volume=lambda d: d[["ask_volume_1", "ask_volume_2", "ask_volume_3"]].sum(axis=1),
+                volume_diff=lambda d: d["total_bid_volume"] - d["total_ask_volume"]
+            )
         )
         self._create_table("imc_prosperity.logs.prices", prices_df)
 

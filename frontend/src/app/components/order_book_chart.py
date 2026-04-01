@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 from app.services import HistoricalService, LogsService
-from app.types import SidebarState
+from app.types import SidebarState, Mode
 
 
 class OrderBookChart:
@@ -14,7 +14,7 @@ class OrderBookChart:
         self.historical_service: HistoricalService = st.session_state.historical_service
         self.logs_service: LogsService = st.session_state.logs_service
 
-        if sidebar_state.mode == 'historical':
+        if sidebar_state.mode == Mode.HISTORICAL:
             self.prices = self.historical_service.get_prices(self.filters.price_filters)
             self.trades = self.historical_service.get_trades(self.filters.trade_filters)
         else:
@@ -22,11 +22,7 @@ class OrderBookChart:
             self.trades = self.logs_service.get_trades(self.filters.trade_filters)
             self.orders = self.logs_service.get_orders(self.filters.order_filters)
 
-    def load(self):
-        fig = self.create_fig()
-        event = st.plotly_chart(fig, on_select="rerun", selection_mode="points")
-        points = event.selection.points
-        return points
+        self.fig = self.create_fig()
 
     def create_fig(self):
         fig = go.Figure()

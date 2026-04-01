@@ -1,8 +1,7 @@
 import streamlit as st
 import json
-from typing import Literal
 from app.services import LogsService
-from app.types import SidebarState, Indicators, HistoricalFilters, LogsFilters
+from app.types import SidebarState, Indicators, HistoricalFilters, LogsFilters, Mode, VolumeMode
 from data_platform_sdk.schema import (
     PriceFilters,
     TradeFilters,
@@ -15,7 +14,7 @@ from data_platform_sdk.schema import (
 )
 
 class Sidebar:
-    def __init__(self, mode: Literal['historical', 'logs']) -> None:
+    def __init__(self, mode: Mode) -> None:
         self.mode = mode
 
         self.round_number: int | None = None
@@ -32,18 +31,19 @@ class Sidebar:
         self.show_trades: bool = False
         self.show_orders: bool = False
         self.logs_uploaded: bool = False
+        self.volume_mode: VolumeMode | None = None
 
         self.logs_service: LogsService = st.session_state.logs_service
 
     def load(self) -> SidebarState:
         with st.sidebar:
-            if self.mode == 'historical':
+            if self.mode == Mode.HISTORICAL:
                 self.load_file_options()
+                self.load_volume_options()
                 self.load_shared_filters()
                 self.load_indicators()
                 self.load_normalise_option()
                 self.load_trade_filters()
-
 
                 price_filters = PriceFilters(
                     round_number=self.round_number,
@@ -81,6 +81,7 @@ class Sidebar:
 
                     self.logs_uploaded = True
 
+                self.load_volume_options()
                 self.load_shared_filters()
                 self.load_trade_filters()
                 self.load_order_filters()
@@ -117,7 +118,8 @@ class Sidebar:
                 show_trades=self.show_trades,
                 show_orders=self.show_orders,
                 indicators=self.indicators,
-                filters=filters
+                filters=filters,
+                volume_mode=self.volume_mode
             )
 
     def load_file_options(self) -> None:
@@ -148,7 +150,7 @@ class Sidebar:
         self.timestamp_min, self.timestamp_max = st.slider(
             'Timeframe',
             0,
-            999900 if self.mode == 'historical' else 199900,
+            999900 if self.mode == Mode.HISTORICAL else 199900,
             (0, 10000),
             step=1000
         )
@@ -187,4 +189,12 @@ class Sidebar:
 
         self.show_orders = st.checkbox('Show Orders')
 
+    def load_volume_options(self) -> None:
+        st.subheader('Volume Options', divider='grey')
 
+        self.volume_mode = st.selectbox(
+            'Volume Mode',
+            list(VolumeMode),
+            format_func=lambda mode: mode.name,
+            placeholder='Select Volume Mode'
+        )
