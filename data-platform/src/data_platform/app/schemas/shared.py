@@ -9,6 +9,8 @@ class Traders(StrEnum):
 class Product(StrEnum):
     EMERALDS = "EMERALDS"
     TOMATOES = "TOMATOES"
+    ASH_COATED_OSMIUM = "ASH_COATED_OSMIUM"
+    INTARIAN_PEPPER_ROOT = "INTARIAN_PEPPER_ROOT"
 
 
 class Filters(BaseModel):

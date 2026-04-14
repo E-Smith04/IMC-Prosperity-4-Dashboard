@@ -27,7 +27,6 @@ class Indicators(BaseModel):
 class VolumeMode(StrEnum):
     LEVEL = "level"
     NET = "net"
-    AGGREGATED = "aggregated"
 
 
 class SidebarState(BaseModel):

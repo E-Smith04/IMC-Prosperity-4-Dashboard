@@ -29,7 +29,7 @@ def prices_add_features() -> DataFrame:
             coalesce(col("ask_volume_3"), lit(0))
         )
         .withColumn(
-            "volume_diff",
+            "volume_net",
             col("total_bid_volume") - col("total_ask_volume")
         )
         .withColumn("bid_wall", least(col("bid_price_1"), col("bid_price_2"), col("bid_price_3")))

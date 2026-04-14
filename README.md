@@ -49,6 +49,8 @@ The following image shows the main order book chart and all the filters that you
 
 ![Image of the main dashboard](/assets/images/dashboard.png)
 
+<br>
+
 ## Data Platform
 Dependencies:
 - Install Java 17 from [here](https://www.oracle.com/uk/java/technologies/downloads/) as this is required by pyspark.

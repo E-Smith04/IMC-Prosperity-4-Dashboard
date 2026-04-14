@@ -30,10 +30,8 @@ class VolumeChart:
             self.add_ask_volume_2(fig)
             self.add_ask_volume_3(fig)
         elif self.volume_mode == VolumeMode.NET:
-            self.add_volume_diff(fig)
-        else:
-            self.add_bid_volume_aggregate(fig)
-            self.add_ask_volume_aggregate(fig)
+            self.add_volume_net(fig)
+
 
         fig.update_layout(
             title="Volume Chart",
@@ -155,61 +153,22 @@ class VolumeChart:
             )
         )
 
-    def add_volume_diff(self, fig: go.Figure):
+
+    def add_volume_net(self, fig: go.Figure):
         df = self.prices
 
-        colors = ["blue" if v > 0 else "red" for v in df["volume_diff"]]
+        colors = ["blue" if v > 0 else "red" for v in df["volume_net"]]
 
         fig.add_trace(
             go.Bar(
                 x=df["timestamp"],
-                y=df["volume_diff"].abs(),
+                y=df["volume_net"].abs(),
                 name="Net Volume",
                 marker={
                     "color": colors
                 },
                 hovertemplate="<br>".join([
                     "<b>Net Volume:</b> %{y}",
-                    "<extra></extra>"
-                ])
-            )
-        )
-
-    def add_bid_volume_aggregate(self, fig: go.Figure):
-        df = self.prices
-
-        fig.add_trace(
-            go.Scatter(
-                x=df["timestamp"],
-                y=df["total_bid_volume"],
-                mode="lines",
-                name="Bid Volume",
-                line={
-                    "color": "blue",
-                    "dash": "solid"
-                },
-                hovertemplate="<br>".join([
-                    "<b>Bid Vol:</b> %{y}",
-                    "<extra></extra>"
-                ])
-            )
-        )
-
-    def add_ask_volume_aggregate(self, fig: go.Figure):
-        df = self.prices
-
-        fig.add_trace(
-            go.Scatter(
-                x=df["timestamp"],
-                y=df["total_ask_volume"],
-                mode="lines",
-                name="Ask Volume",
-                line={
-                    "color": "red",
-                    "dash": "solid"
-                },
-                hovertemplate="<br>".join([
-                    "<b>Ask Vol:</b> %{y}",
                     "<extra></extra>"
                 ])
             )
