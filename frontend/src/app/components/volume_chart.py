@@ -162,7 +162,7 @@ class VolumeChart:
         fig.add_trace(
             go.Bar(
                 x=df["timestamp"],
-                y=df["volume_net"].abs(),
+                y=df["volume_net"],
                 name="Net Volume",
                 marker={
                     "color": colors
