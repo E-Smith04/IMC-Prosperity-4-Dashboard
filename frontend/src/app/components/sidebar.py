@@ -127,13 +127,13 @@ class Sidebar:
 
         self.round_number = st.selectbox(
             'Round',
-            (0, 1),
+            (0, 1, 2, 3, 4, 5),
             placeholder='Select Round'
         )
 
         self.day = st.selectbox(
             'Day',
-            (-2, -1, 0),
+            (-2, -1, 0, 1, 2, 3, 4),
             placeholder='Select Day'
         )
 
