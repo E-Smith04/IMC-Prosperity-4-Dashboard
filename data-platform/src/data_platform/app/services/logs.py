@@ -20,8 +20,6 @@ _TRADE_CLAUSES: dict[str, str] = {
     "symbol": "symbol = {symbol}",
     "quantity_min": "quantity >= {quantity_min}",
     "quantity_max": "quantity <= {quantity_max}",
-    "buyers": "buyers IN {buyers}",
-    "sellers": "sellers IN {sellers}",
 }
 
 _ORDER_CLAUSES: dict[str, str] = {
@@ -93,6 +91,16 @@ class LogsService:
             if getattr(filters, field) is not None
         ]
 
+        if "buyers" in sql_params:
+            where_clauses.append(
+                self._build_or_clause("buyer", filters.buyers)
+            )
+
+        if "sellers" in sql_params:
+            where_clauses.append(
+                self._build_or_clause("seller", filters.sellers)
+            )
+
         query = f"SELECT * FROM {table_name}"
         if where_clauses:
             query += " WHERE " + " AND ".join(where_clauses)
@@ -114,3 +122,7 @@ class LogsService:
             .using("delta") \
             .tableProperty("delta.feature.catalogManaged", "supported") \
             .create()
+
+    @staticmethod
+    def _build_or_clause(column: str, values: list[str]) -> str:
+        return "(" + " OR ".join(f"{column} = '{v}'" for v in values) + ")"
