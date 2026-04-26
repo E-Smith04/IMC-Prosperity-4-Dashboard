@@ -4,6 +4,13 @@ from enum import StrEnum
 
 class Traders(StrEnum):
     SUBMISSION = "SUBMISSION"
+    MARK_01 = "Mark 01"
+    MARK_14 = "Mark 14"
+    MARK_22 = "Mark 22"
+    MARK_38 = "Mark 38"
+    MARK_49 = "Mark 49"
+    MARK_55 = "Mark 55"
+    MARK_67 = "Mark 67"
 
 
 class Product(StrEnum):

@@ -62,7 +62,9 @@ class Sidebar:
                     timestamp_max=self.timestamp_max,
                     normalise_option=self.normalise_option,
                     quantity_min=self.quantity_min,
-                    quantity_max=self.quantity_max
+                    quantity_max=self.quantity_max,
+                    buyers=self.buyers,
+                    sellers=self.sellers
                 )
 
                 filters = HistoricalFilters(
@@ -97,7 +99,9 @@ class Sidebar:
                     timestamp_min=self.timestamp_min,
                     timestamp_max=self.timestamp_max,
                     quantity_min=self.quantity_min,
-                    quantity_max=self.quantity_max
+                    quantity_max=self.quantity_max,
+                    buyers=self.buyers,
+                    sellers=self.sellers
                 )
 
                 order_filters = LogsOrderFilters(
@@ -183,6 +187,19 @@ class Sidebar:
         self.show_trades = st.checkbox('Show Trades')
         self.quantity_min = st.number_input('Min Quantity', min_value=0, step=1)
         self.quantity_max = st.number_input('Max Quantity', min_value=0, step=1, value=20)
+        self.buyers = st.multiselect(
+            'Buyers',
+            list(Traders),
+            format_func=lambda option: option.name,
+            placeholder='Select Buyers'
+        )
+        self.sellers = st.multiselect(
+            'Sellers',
+            list(Traders),
+            format_func=lambda option: option.name,
+            placeholder='Select Sellers'
+        )
+
 
     def load_order_filters(self) -> None:
         st.subheader('Order Filters', divider='grey')
